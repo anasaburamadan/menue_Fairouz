@@ -202,7 +202,7 @@ h1 span {
     font-weight: 900;
 
     background: linear-gradient(135deg, #d4af37, #f6d365);
-    color: #111;
+    color: #fff;
 
     border: none;
     border-radius: 50px;
@@ -742,3 +742,4 @@ footer a {
     color: #111;
     border-color: transparent;
 }
+
