@@ -22,12 +22,16 @@
                     <h1>كافي الفيروز<br><span>AL Fairouz Cafe</span></h1>
                 </div>
             </div>
-    
+
             <div class="mobile-row">
                 <div class="table-box">
                     <div id="tableBadge" class="table-badge"></div>
+
+                    <button id="changeTableBtn" class="change-table-btn" type="button">
+                        تغيير الطاولة
+                    </button>
                 </div>
-    
+
                 <div class="search-box">
                     <div class="search" role="search">
                         <input id="q" type="search" placeholder="ابحث عن صنف ... (مثال: لوتس، كريب، موهيتو)">
@@ -35,21 +39,17 @@
                 </div>
             </div>
         </div>
-    
+
         <div class="chips-wrapper">
             <div id="chips"></div>
         </div>
-    
-        <!-- <button id="cartBtn" class="cart-btn" type="button">
-            🧺 اطلب الآن
-            <span id="cartCount" class="cart-count">0</span>
-        </button> -->
     </header>
 
     <button id="cartBtn" class="cart-btn" type="button">
         🧺 اطلب الآن
         <span id="cartCount" class="cart-count">0</span>
     </button>
+
     <main>
         <div class="wrap">
             <div id="menu" class="grid"></div>
@@ -63,7 +63,8 @@
     </main>
 
     <footer>
-        © <span id="y"></span> Designed By <a href="https://wa.me/970597616471">Eng.Anas Abu Ramadan</a>
+        © <span id="y"></span> Designed By
+        <a href="https://wa.me/970597616471" target="_blank">Eng.Anas Abu Ramadan</a>
     </footer>
 
     <!-- CART DRAWER -->
@@ -104,6 +105,20 @@
 
             <div class="modal-actions">
                 <button id="tableModalSave" class="modal-btn primary" type="button">متابعة</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PASSWORD MODAL -->
+    <div id="passwordModal" class="modal" aria-hidden="true">
+        <div class="modal-box">
+            <h3>كلمة مرور المدير</h3>
+            <p>أدخل كلمة المرور لتغيير رقم الطاولة</p>
+
+            <input id="passwordModalInput" class="modal-input" type="password" placeholder="كلمة المرور" />
+
+            <div class="modal-actions">
+                <button id="passwordModalSave" class="modal-btn primary" type="button">متابعة</button>
             </div>
         </div>
     </div>
