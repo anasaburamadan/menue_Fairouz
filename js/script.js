@@ -1,15 +1,16 @@
 // ====== رقم واتساب للمحل (بدون +) ======
 const WHATSAPP_NUMBER = "972598471353"; // غيّره لرقم المحل
+const TABLE_CHANGE_PASSWORD = "1234";   // غيّرها لكلمة مرور المدير
 
-// ====== TABLE ID (بدون QR) ======
+// ====== TABLE ID ======
 const TABLE_KEY = "alfairouz_table_id_v1";
 
-function getTableIdFromSession() {
-    return (sessionStorage.getItem(TABLE_KEY) || "").trim() || null;
+function getTableId() {
+    return (localStorage.getItem(TABLE_KEY) || "").trim() || null;
 }
 
-function setTableIdToSession(t) {
-    sessionStorage.setItem(TABLE_KEY, t);
+function setTableId(t) {
+    localStorage.setItem(TABLE_KEY, t);
 }
 
 function openTableModal(onSave) {
@@ -20,6 +21,8 @@ function openTableModal(onSave) {
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
 
+    input.value = "";
+    input.style.borderColor = "rgba(212, 175, 55, 0.30)";
     setTimeout(() => input.focus(), 50);
 
     function close() {
@@ -48,12 +51,60 @@ function openTableModal(onSave) {
     input.addEventListener("keydown", handleEnter);
 }
 
-let TABLE_ID = getTableIdFromSession();
+function openPasswordModal(onSuccess) {
+    const modal = document.getElementById("passwordModal");
+    const input = document.getElementById("passwordModalInput");
+    const btn = document.getElementById("passwordModalSave");
+
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+
+    input.value = "";
+    input.style.borderColor = "rgba(212, 175, 55, 0.30)";
+    setTimeout(() => input.focus(), 50);
+
+    function close() {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        btn.removeEventListener("click", handleSave);
+        input.removeEventListener("keydown", handleEnter);
+    }
+
+    function handleSave() {
+        const pass = (input.value || "").trim();
+
+        if (!pass) {
+            input.focus();
+            input.style.borderColor = "rgba(255,80,80,0.8)";
+            return;
+        }
+
+        if (pass !== TABLE_CHANGE_PASSWORD) {
+            input.value = "";
+            input.focus();
+            input.style.borderColor = "rgba(255,80,80,0.8)";
+            alert("كلمة المرور غير صحيحة");
+            return;
+        }
+
+        close();
+        onSuccess();
+    }
+
+    function handleEnter(e) {
+        if (e.key === "Enter") handleSave();
+    }
+
+    btn.addEventListener("click", handleSave);
+    input.addEventListener("keydown", handleEnter);
+}
+
+let TABLE_ID = getTableId();
 
 if (!TABLE_ID) {
     openTableModal((t) => {
         TABLE_ID = t;
-        setTableIdToSession(t);
+        setTableId(t);
         initApp();
     });
 } else {
@@ -63,6 +114,19 @@ if (!TABLE_ID) {
 function initApp() {
     const tableBadge = document.getElementById("tableBadge");
     if (tableBadge) tableBadge.textContent = `رقم الطاولة: ${TABLE_ID}`;
+
+    const changeTableBtn = document.getElementById("changeTableBtn");
+    if (changeTableBtn) {
+        changeTableBtn.addEventListener("click", () => {
+            openPasswordModal(() => {
+                openTableModal((t) => {
+                    TABLE_ID = t;
+                    setTableId(t);
+                    window.location.reload();
+                });
+            });
+        });
+    }
 
     const yEl = document.getElementById("y");
     if (yEl) yEl.textContent = new Date().getFullYear();
@@ -97,7 +161,6 @@ function initApp() {
                 { name: "كيك قطع لوتس", price: "10" },
             ]
         },
-
         {
             id: "cold",
             title: "مشروبات باردة",
@@ -161,7 +224,6 @@ function initApp() {
                 { name: "ساندويش مرتديلا", price: "7.5" },
             ]
         },
-
     ];
 
     const menuEl = document.getElementById("menu");
@@ -259,18 +321,18 @@ function initApp() {
         }
 
         cartItemsEl.innerHTML = items.map(it => `
-      <div class="cart-row">
-        <div class="meta">
-          <div class="nm">${it.name}</div>
-          <div class="pr">السعر: ${it.price}</div>
-        </div>
-        <div class="qty">
-          <button type="button" onclick="window.__dec('${it._id}')">-</button>
-          <div class="q">${it.qty}</div>
-          <button type="button" onclick="window.__inc('${it._id}')">+</button>
-        </div>
-      </div>
-    `).join("");
+            <div class="cart-row">
+                <div class="meta">
+                    <div class="nm">${it.name}</div>
+                    <div class="pr">السعر: ${it.price}</div>
+                </div>
+                <div class="qty">
+                    <button type="button" onclick="window.__dec('${it._id}')">-</button>
+                    <div class="q">${it.qty}</div>
+                    <button type="button" onclick="window.__inc('${it._id}')">+</button>
+                </div>
+            </div>
+        `).join("");
     }
 
     window.__inc = inc;
@@ -282,10 +344,10 @@ function initApp() {
         const chips = [{ id: "all", label: "الكل" }, ...data.map(c => ({ id: c.id, label: c.title }))];
 
         chipsEl.innerHTML = chips.map(ch => `
-      <span class="chip ${ch.id === activeCategory ? "active" : ""}" data-id="${ch.id}">
-        ${ch.label}
-      </span>
-    `).join("");
+            <span class="chip ${ch.id === activeCategory ? "active" : ""}" data-id="${ch.id}">
+                ${ch.label}
+            </span>
+        `).join("");
 
         chipsEl.querySelectorAll(".chip").forEach(el => {
             el.addEventListener("click", () => {
@@ -311,26 +373,26 @@ function initApp() {
             if (filtered.length === 0) return "";
 
             return `
-        <section class="card" aria-label="${cat.title}">
-          <h2>
-            <span>${cat.title}</span>
-            <span class="count">${filtered.length} صنف</span>
-          </h2>
-          <div class="items">
-            ${filtered.map(it => `
-              <div class="item">
-                <div class="name">${it.name}</div>
-                <div class="right">
-                  <div class="price ${it.price === "—" ? "muted" : ""}">${it.price}</div>
-                  <button class="add-btn" type="button" data-add="${encodeURIComponent(JSON.stringify(it))}">
-                    + أضف
-                  </button>
-                </div>
-              </div>
-            `).join("")}
-          </div>
-        </section>
-      `;
+                <section class="card" aria-label="${cat.title}">
+                    <h2>
+                        <span>${cat.title}</span>
+                        <span class="count">${filtered.length} صنف</span>
+                    </h2>
+                    <div class="items">
+                        ${filtered.map(it => `
+                            <div class="item">
+                                <div class="name">${it.name}</div>
+                                <div class="right">
+                                    <div class="price ${it.price === "—" ? "muted" : ""}">${it.price}</div>
+                                    <button class="add-btn" type="button" data-add="${encodeURIComponent(JSON.stringify(it))}">
+                                        + أضف
+                                    </button>
+                                </div>
+                            </div>
+                        `).join("")}
+                    </div>
+                </section>
+            `;
         }).join("");
 
         menuEl.querySelectorAll("[data-add]").forEach(btn => {
