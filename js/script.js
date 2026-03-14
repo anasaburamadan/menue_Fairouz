@@ -113,7 +113,9 @@ if (!TABLE_ID) {
 
 function initApp() {
     const tableBadge = document.getElementById("tableBadge");
-    if (tableBadge) tableBadge.textContent = `رقم الطاولة: ${TABLE_ID}`;
+    if (tableBadge) {
+        tableBadge.innerHTML = `رقم الطاولة: <span class="table-number">${TABLE_ID}</span>`;
+    }
 
     const changeTableBtn = document.getElementById("changeTableBtn");
     if (changeTableBtn) {
@@ -258,8 +260,11 @@ function initApp() {
     let cart = loadCart();
 
     function loadCart() {
-        try { return JSON.parse(localStorage.getItem(CART_KEY)) || {}; }
-        catch { return {}; }
+        try {
+            return JSON.parse(localStorage.getItem(CART_KEY)) || {};
+        } catch {
+            return {};
+        }
     }
 
     function saveCart() {
@@ -341,7 +346,10 @@ function initApp() {
     let activeCategory = "all";
 
     function renderChips() {
-        const chips = [{ id: "all", label: "الكل" }, ...data.map(c => ({ id: c.id, label: c.title }))];
+        const chips = [
+            { id: "all", label: "الكل" },
+            ...data.map(c => ({ id: c.id, label: c.title }))
+        ];
 
         chipsEl.innerHTML = chips.map(ch => `
             <span class="chip ${ch.id === activeCategory ? "active" : ""}" data-id="${ch.id}">
@@ -455,6 +463,7 @@ function initApp() {
         const count = Object.values(cart).reduce((a, it) => a + it.qty, 0);
         if (count === 0) return alert("السلة فاضية.");
         if (!WHATSAPP_NUMBER) return alert("عدّل رقم واتساب بالمصدر (WHATSAPP_NUMBER).");
+
         const text = encodeURIComponent(buildWhatsAppText());
         const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
         window.open(url, "_blank");
